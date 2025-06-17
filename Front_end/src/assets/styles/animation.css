@@ -1,0 +1,337 @@
+/* Personnalisation du select */
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 1.5em;
+    padding-right: 2.5rem;
+  }
+  
+  /* Dark mode pour les options */
+  select option {
+    background: #2d3748;
+    color: white;
+  }
+
+/* Animation fadeIn for main title */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-title {
+  animation: fadeIn 1.5s ease forwards;
+}
+
+/* Animation slideIn for variety */
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.slide-in-title {
+  animation: slideIn 1.5s ease forwards;
+}
+
+/* Animation fadeIn for paragraphs */
+@keyframes fadeInParagraph {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.fade-in-paragraph {
+  animation: fadeInParagraph 2s ease forwards;
+}
+
+/* Blue glowing light animation for image */
+@keyframes blueGlow {
+  0%, 100% {
+    box-shadow: 0 0 10px 2px rgba(5, 114, 230, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 20px 5px rgb(26, 131, 244);
+  }
+}
+
+.blue-glow-image {
+  animation: blueGlow 3s ease-in-out infinite;
+  transition: transform 0.5s ease;
+}
+
+.blue-glow-image:hover {
+  transform: scale(1.05);
+}
+
+/* Blue glowing light animation for container (like welcome page images) */
+@keyframes blueGlowContainer {
+  0%, 100% {
+    box-shadow: 0 0 10px 2px rgba(5, 114, 230, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 20px 5px rgb(26, 131, 244);
+  }
+}
+
+.blue-glow-container {
+  animation: blueGlowContainer 3s ease-in-out infinite;
+  border-radius: 0.5rem;
+  transition: box-shadow 0.5s ease;
+}
+
+/* Yellow glowing light animation for container */
+@keyframes yellowGlowContainer {
+  0%, 100% {
+    box-shadow: 0 0 10px 2px rgba(255, 223, 0, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 20px 5px rgba(255, 223, 0, 1);
+  }
+}
+
+.yellow-glow-container {
+  animation: yellowGlowContainer 3s ease-in-out infinite;
+  border-radius: 0.5rem;
+  transition: box-shadow 0.5s ease;
+}
+
+/* Green glowing light animation for container */
+@keyframes greenGlowContainer {
+  0%, 100% {
+    box-shadow: 0 0 10px 2px rgba(34, 197, 94, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 20px 5px rgba(34, 197, 94, 1);
+  }
+}
+
+.green-glow-container {
+  animation: greenGlowContainer 3s ease-in-out infinite;
+  border-radius: 0.5rem;
+  transition: box-shadow 0.5s ease;
+}
+
+/* Red glowing light animation for container */
+@keyframes redGlowContainer {
+  0%, 100% {
+    box-shadow: 0 0 10px 2px rgba(239, 68, 68, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 20px 5px rgba(239, 68, 68, 1);
+  }
+}
+
+.red-glow-container {
+  animation: redGlowContainer 3s ease-in-out infinite;
+  border-radius: 0.5rem;
+  transition: box-shadow 0.5s ease;
+}
+
+/* Orange glowing light animation for container */
+@keyframes orangeGlowContainer {
+  0%, 100% {
+    box-shadow: 0 0 10px 2px rgba(249, 115, 22, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 20px 5px rgba(249, 115, 22, 1);
+  }
+}
+
+.orange-glow-container {
+  animation: orangeGlowContainer 3s ease-in-out infinite;
+  border-radius: 0.5rem;
+  transition: box-shadow 0.5s ease;
+}
+/* Blue glowing light animation for container (like welcome page images) */
+@keyframes YellowGlowContainer {
+  0%, 100% {
+    box-shadow: 0 0 10px 2px rgba(235, 249, 44, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 20px 5px rgb(235, 223, 47);
+  }
+}
+
+.Yelloow-glow-container {
+  animation: blueGlowContainer 3s ease-in-out infinite;
+  border-radius: 0.5rem;
+  transition: box-shadow 0.5s ease;
+}
+
+/* Yellow glowing light animation for container */
+@keyframes yellowGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px 5px rgba(255, 223, 0, 0.9);
+  }
+  50% {
+    box-shadow: 0 0 40px 10px rgba(255, 223, 0, 1);
+  }
+}
+
+.yellow-glow-container {
+  animation: yellowGlow 3s ease-in-out infinite;
+  border-radius: 0.5rem; /* match rounded-lg */
+  transition: box-shadow 0.5s ease;
+}
+
+/* Yellow glowing border animation */
+@keyframes yellowGlowBorder {
+  0%, 100% {
+    border-color: rgba(255, 223, 0, 1);
+    box-shadow: 0 0 20px 6px rgba(255, 223, 0, 1);
+  }
+  50% {
+    border-color: rgba(255, 223, 0, 1);
+    box-shadow: 0 0 40px 12px rgba(255, 223, 0, 1);
+  }
+}
+
+.yellow-glow-border {
+  border: 3px solid rgba(255, 223, 0, 0.7);
+  border-radius: 0.5rem;
+  animation: yellowGlowBorder 3s ease-in-out infinite;
+  transition: box-shadow 0.5s ease, border-color 0.5s ease;
+}
+
+/* Green glowing border animation */
+@keyframes greenGlowBorder {
+  0%, 100% {
+    border-color: rgba(34, 197, 94, 1);
+    box-shadow: 0 0 20px 6px rgba(34, 197, 94, 1);
+  }
+  50% {
+    border-color: rgba(34, 197, 94, 1);
+    box-shadow: 0 0 40px 12px rgba(34, 197, 94, 1);
+  }
+}
+
+.green-glow-border {
+  border: 3px solid rgba(34, 197, 94, 0.7);
+  border-radius: 0.5rem;
+  animation: greenGlowBorder 3s ease-in-out infinite;
+  transition: box-shadow 0.5s ease, border-color 0.5s ease;
+}
+
+/* Strong blue glowing border animation */
+@keyframes blueGlowBorderStrong {
+  0%, 100% {
+    border-color: rgba(37, 99, 235, 1);
+    box-shadow: 0 0 30px 10px rgba(37, 99, 235, 0.8);
+    filter: blur(4px);
+  }
+  50% {
+    border-color: rgba(37, 99, 235, 1);
+    box-shadow: 0 0 60px 20px rgba(37, 99, 235, 1);
+    filter: blur(6px);
+  }
+}
+
+.blue-glow-border-strong {
+  border: 4px solid rgba(37, 99, 235, 0.8);
+  border-radius: 0.5rem;
+  animation: blueGlowBorderStrong 3s ease-in-out infinite;
+  transition: box-shadow 0.5s ease, border-color 0.5s ease;
+}
+
+/* Blue glowing light animation for container (like welcome page images) */
+@keyframes blueGlowContainer {
+  0%, 100% {
+    box-shadow: 0 0 10px 2px rgba(5, 114, 230, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 20px 5px rgb(26, 131, 244);
+  }
+}
+
+.blue-glow-container {
+  animation: blueGlowContainer 3s ease-in-out infinite;
+  border-radius: 0.5rem;
+  transition: box-shadow 0.5s ease;
+}
+
+/* Blue glowing border for inputs */
+@keyframes blueGlowBorderInput {
+  0%, 100% {
+    border-color: rgba(37, 99, 235, 1);
+    box-shadow: 0 0 8px 2px rgba(37, 99, 235, 0.7);
+  }
+  50% {
+    border-color: rgba(37, 99, 235, 1);
+    box-shadow: 0 0 16px 4px rgba(37, 99, 235, 1);
+  }
+}
+
+.blue-glow-border-input {
+  border: 2px solid rgba(37, 99, 235, 0.7);
+  border-radius: 0.375rem;
+  animation: blueGlowBorderInput 3s ease-in-out infinite;
+  transition: box-shadow 0.5s ease, border-color 0.5s ease;
+}
+
+/* Styles for welcome page buttons */
+.welcome-button {
+  font-weight: 700;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.375rem;
+  text-transform: uppercase;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: inline-block;
+  user-select: none;
+}
+
+.welcome-button-primary {
+  background: linear-gradient(90deg, #3b82f6, #2563eb);
+  color: white;
+}
+
+.welcome-button-primary:hover {
+  background: linear-gradient(90deg, #2563eb, #3b82f6);
+  box-shadow: 0 6px 12px rgba(37, 99, 235, 0.6);
+  transform: translateY(-2px);
+}
+
+.welcome-button-secondary {
+  background: linear-gradient(90deg, #6b7280, #4b5563);
+  color: white;
+}
+
+.welcome-button-secondary:hover {
+  background: linear-gradient(90deg, #4b5563, #6b7280);
+  box-shadow: 0 6px 12px rgba(75, 85, 99, 0.6);
+  transform: translateY(-2px);
+}
+
+/* General fade-in transition for entire welcome page content */
+@keyframes pageFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-fade-in {
+  animation: pageFadeIn 1.5s ease forwards;
+}

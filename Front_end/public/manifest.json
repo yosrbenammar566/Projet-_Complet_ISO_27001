@@ -1,0 +1,9 @@
+{
+  "short_name": "CISO",
+  "name": "CISO App - Audit & ISO 27001",
+  "icons": [],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff"
+}
