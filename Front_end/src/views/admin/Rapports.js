@@ -124,6 +124,7 @@ const Rapports = ({
 
   // Function to handle saving the current report as PDF
   const handleSaveReport = () => {
+    console.log(reportRef)
     if (!reportRef.current) {
       alert("Erreur: le rapport n'est pas prêt pour la sauvegarde.");
       return;
@@ -135,19 +136,45 @@ const Rapports = ({
         html2canvas.default(printContent).then((canvas) => {
           const imgData = canvas.toDataURL("image/png");
           const pdf = new jsPDF.jsPDF("p", "mm", "a4");
-          const imgProps = pdf.getImageProperties(imgData);
-          const pdfWidth = pdf.internal.pageSize.getWidth();
-          const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-          pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-          const pdfBlob = pdf.output("blob");
-          const pdfUrl = URL.createObjectURL(pdfBlob);
-          const newSavedReport = {
-            id: Date.now(),
-            url: pdfUrl,
-            title: reportData.title,
-            date: reportData.date,
-          };
-          setSavedReports((prev) => [...prev, newSavedReport]);
+
+          // A4 size in mm
+          const pageWidth = 210;
+          const pageHeight = 297;
+
+          // Get the aspect ratio of the canvas
+          const canvasWidth = canvas.width;
+          const canvasHeight = canvas.height;
+          const canvasAspectRatio = canvasWidth / canvasHeight;
+          const pageAspectRatio = pageWidth / pageHeight;
+
+          let imgWidth, imgHeight, xOffset, yOffset;
+
+          if (canvasAspectRatio > pageAspectRatio) {
+            // Image is wider relative to the page — fit width
+            imgWidth = pageWidth;
+            imgHeight = pageWidth / canvasAspectRatio;
+            xOffset = 0;
+            yOffset = (pageHeight - imgHeight) / 2;
+          } else {
+            // Image is taller relative to the page — fit height
+            imgHeight = pageHeight;
+            imgWidth = pageHeight * canvasAspectRatio;
+            yOffset = 0;
+            xOffset = (pageWidth - imgWidth) / 2;
+          }
+
+          pdf.addImage(imgData, "PNG", xOffset, yOffset, imgWidth, imgHeight);
+          pdf.save("rapport.pdf");
+
+          // const pdfBlob = pdf.output("blob");
+          // const pdfUrl = URL.createObjectURL(pdfBlob);
+          // const newSavedReport = {
+          //   id: Date.now(),
+          //   url: pdfUrl,
+          //   title: reportData.title,
+          //   date: reportData.date,
+          // };
+          // setSavedReports((prev) => [...prev, newSavedReport]);
           alert("Rapport sauvegardé en PDF avec succès !");
         });
       });
@@ -184,8 +211,7 @@ const Rapports = ({
       "Titre,Contrôle,Gravité,Action Corrective,Statut",
       ...nonConformities.map(
         (item) =>
-          `"${item.title || ""}","${item.control || ""}","${
-            item.severity || ""
+          `"${item.title || ""}","${item.control || ""}","${item.severity || ""
           }","${item.correctiveAction || ""}","${item.status || ""}"`
       ),
     ].join("\n");
@@ -208,7 +234,7 @@ const Rapports = ({
   const handlePrint = useReactToPrint({
     content: () => {
       console.log("Élément référencé:", reportRef.current);
-    return reportRef.current;
+      return reportRef.current;
     },
     pageStyle: `
       @page { size: A4; margin: 1cm; }
@@ -242,12 +268,12 @@ const Rapports = ({
   };
 
   return (
-    <section className="relative block py-24 lg:pt-0 bg-blueGray-800 mt-10 mb-8 bg-white rounded shadow-md p-6 print-section ">
+    <section className="relative block py-24 lg:pt-0 bg-blueGray-800 mt-10 mb-8 bg-white print-section ">
       <div className="container mx-auto px-4">
         <div className="flex flex-wrap justify-center mt-10">
           <div className="w-full lg:w-10/12 px-4">
             <div
-              
+
               className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-200"
             >
               <div className="flex-auto p-5 lg:p-10">
@@ -278,13 +304,13 @@ const Rapports = ({
 
                 {/* Report content: edit mode or preview mode */}
                 {isEditing ? (
-                  <div className="bg-white rounded shadow-md p-6 mb-6">
+                  <div className="bg-white mb-6">
                     {/* Edit mode form */}
                     <h5 className="text-lg font-semibold text-blueGray-700 mb-4">
                       Édition du Rapport
                     </h5>
 
-                    <div ref={reportRef}  className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                       {/* Report title */}
                       <div>
                         <label className="block text-sm font-bold mb-2">
@@ -401,7 +427,7 @@ const Rapports = ({
                     </div>
                   </div>
                 ) : (
-                  <div className="bg-white rounded shadow-md p-6 mb-6">
+                  <div ref={reportRef} className="bg-white p-4">
                     {/* Preview mode display */}
                     <div className="text-center mb-8">
                       <h1 className="text-3xl font-bold">{reportData.title}</h1>
@@ -420,15 +446,15 @@ const Rapports = ({
                     </div>
 
                     {/* Global graph section */}
-                    <div className="mb-8">
+                    <div className="py-4">
                       <div className="flex justify-center mt-6">
-                       
+
                         <GrapheAudit />
                       </div>
                     </div>
 
                     {/* Audit calendar/planning summary */}
-                    <div className="mb-8 bg-white rounded shadow-md p-6">
+                    <div className="py-4 bg-white rounded">
                       <h2 className="text-xl font-semibold mb-4">
                         Calendrier / Planning de l’audit
                       </h2>
@@ -442,11 +468,11 @@ const Rapports = ({
                       <p>
                         <strong>État d’avancement :</strong> {auditProgress}
                       </p>
-                      
+
                     </div>
 
                     {/* Compliance checklist summary table */}
-                    <div className="mb-8 bg-white rounded shadow-md p-6 overflow-x-auto">
+                    <div className="py-4 bg-white overflow-x-auto">
                       <h2 className="text-xl font-semibold mb-4">
                         Checklist de conformité
                       </h2>
@@ -485,7 +511,7 @@ const Rapports = ({
                     </div>
 
                     {/* Non-conformities summary table */}
-                    <div className="mb-8 bg-white rounded shadow-md p-6 overflow-x-auto">
+                    <div className="py-4 bg-white overflow-x-auto">
                       <h2 className="text-xl font-semibold mb-4">
                         Non-conformités
                       </h2>
@@ -522,7 +548,7 @@ const Rapports = ({
                     </div>
 
                     {/* Action plan summary table */}
-                    <div className="mb-8 bg-white rounded shadow-md p-6 overflow-x-auto">
+                    <div className="py-4 bg-white overflow-x-auto">
                       <h2 className="text-xl font-semibold mb-4">
                         Plan d’action
                       </h2>
@@ -569,7 +595,7 @@ const Rapports = ({
                     </div>
 
                     {/* Notes and auditor recommendations */}
-                    <div className="mb-8 bg-white rounded shadow-md p-6">
+                    <div className="py-4 bg-white">
                       <h2 className="text-xl font-semibold mb-4">
                         Notes et recommandations de l’auditeur
                       </h2>
@@ -583,7 +609,7 @@ const Rapports = ({
                     </div>
 
                     {/* General conclusion */}
-                    <div className="mb-8 bg-white rounded shadow-md p-6 text-center">
+                    <div className="py-4 bg-white text-center">
                       <h2 className="text-xl font-semibold mb-4">
                         Conclusion générale
                       </h2>
