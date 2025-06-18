@@ -112,6 +112,7 @@ export default function AnimatedLoginRegister() {
           <h1>Login</h1>
           <form onSubmit={handleLogin}>
             <div className="input-box">
+              <label>Email</label>
               <input
                 type="email"
                 name="email"
@@ -121,9 +122,10 @@ export default function AnimatedLoginRegister() {
                 }
                 required
               />
-              <label>Email</label>
+              
             </div>
             <div className="input-box">
+              <label>Password</label>
               <input
                 type="password"
                 name="password"
@@ -133,7 +135,7 @@ export default function AnimatedLoginRegister() {
                 }
                 required
               />
-              <label>Password</label>
+              
             </div>
             <div className="remember-forgot">
               <label>
@@ -163,6 +165,7 @@ export default function AnimatedLoginRegister() {
           <h1>Sign Up</h1>
           <form onSubmit={handleRegister}>
             <div className="input-box">
+              <label>Nom</label>
               <input
                 type="text"
                 name="name"
@@ -172,9 +175,10 @@ export default function AnimatedLoginRegister() {
                 }
                 required
               />
-              <label>Nom</label>
+              
             </div>
             <div className="input-box">
+              <label>Email</label>
               <input
                 type="email"
                 name="email"
@@ -184,9 +188,9 @@ export default function AnimatedLoginRegister() {
                 }
                 required
               />
-              <label>Email</label>
+              
             </div>
-            <div className="input-box">
+            {/* <div className="input-box">
               <input
                 type="text"
                 name="verificationCode"
@@ -213,8 +217,9 @@ export default function AnimatedLoginRegister() {
                   ? "Renvoyer"
                   : "Envoyer le code"}
               </button>
-            </div>
+            </div> */}
             <div className="input-box">
+              <label>Password</label>
               <input
                 type="password"
                 name="password"
@@ -224,9 +229,10 @@ export default function AnimatedLoginRegister() {
                 }
                 required
               />
-              <label>Password</label>
+              
             </div>
             <div className="input-box">
+              <label>Poste</label>
               <select
                 name="poste"
                 value={registerData.poste}
@@ -240,7 +246,7 @@ export default function AnimatedLoginRegister() {
                 <option value="auditeur">Auditeur</option>
                 <option value="responsable">Responsable SMSI</option>
               </select>
-              <label>Poste</label>
+              
             </div>
             <button type="submit" className="btn">Sign Up</button>
             <div className="logreg-link">

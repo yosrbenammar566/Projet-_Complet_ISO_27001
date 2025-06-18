@@ -7,7 +7,7 @@ import Login from "../views/auth/Login";
 import Forget from "../views/auth/forget";
 import Register from "../views/auth/Register";
 import AnimatedLoginRegister from "../views/auth/AnimatedLoginRegister"; 
-
+import CodeEmail from "views/auth/CodeEmail.js";
 import "../styles/animations.css";
 
 export default function Auth() {
@@ -47,6 +47,7 @@ export default function Auth() {
                   <Route path="/auth/login" component={Login} />
                   <Route path="/auth/forget" component={Forget} />
                   <Route path="/auth/register" component={Register} />
+                  <Route path="/auth/CodeEmail" exact component={CodeEmail} />
                   <Redirect from="/auth" to="/auth/login" />
                 </Switch>
               </div>
