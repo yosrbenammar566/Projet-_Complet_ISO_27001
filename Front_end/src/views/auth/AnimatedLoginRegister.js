@@ -1,16 +1,13 @@
 // src/components/AnimatedLoginRegister/AnimatedLoginRegister.jsx
 
-
 import React, { useState } from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import "./AnimatedLoginRegister.css";
-import cyberImage from '../../assets/img/images6.jpeg';
+import cyberImage from "../../assets/img/images6.jpeg";
 console.log("✅ Ce fichier est utilisé dans App.js !");
 
 export default function AnimatedLoginRegister() {
   console.log("✅ Composant AnimatedLoginRegister chargé");
-
-  
 
   const location = useLocation();
   const history = useHistory();
@@ -78,7 +75,6 @@ export default function AnimatedLoginRegister() {
   const handleSendCode = () => {
     if (!registerData.email) {
       alert("Veuillez entrer votre email.");
-      
     }
     setSendingCode(true);
     setTimeout(() => {
@@ -86,6 +82,37 @@ export default function AnimatedLoginRegister() {
       setCodeSent(true);
       alert("Code de vérification simulé !");
     }, 1000);
+  };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setRegisterData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const sendVerificationCode = async () => {
+    if (!registerData.email) {
+      alert(
+        "Veuillez entrer votre email pour recevoir le code de vérification."
+      );
+      return;
+    }
+    setSendingCode(true);
+    try {
+      // TODO: Call backend API to send verification code to newAccount.email
+      console.log("Sending verification code to:", registerData.email);
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setCodeSent(true);
+      alert("Code de vérification envoyé à votre email.");
+      history.push("/auth/CodeEmail");
+    } catch (error) {
+      console.error("Erreur lors de l'envoi du code de vérification:", error);
+      alert("Erreur lors de l'envoi du code de vérification.");
+    } finally {
+      setSendingCode(false);
+    }
   };
 
   return (
@@ -122,7 +149,6 @@ export default function AnimatedLoginRegister() {
                 }
                 required
               />
-              
             </div>
             <div className="input-box">
               <label>Password</label>
@@ -135,7 +161,6 @@ export default function AnimatedLoginRegister() {
                 }
                 required
               />
-              
             </div>
             <div className="remember-forgot">
               <label>
@@ -143,7 +168,9 @@ export default function AnimatedLoginRegister() {
               </label>
               <a href="#">Forgot password?</a>
             </div>
-            <button type="submit" className="btn">Login</button>
+            <button type="submit" className="btn">
+              Login
+            </button>
             <div className="logreg-link">
               <p>
                 Don't have an account?{" "}
@@ -175,7 +202,6 @@ export default function AnimatedLoginRegister() {
                 }
                 required
               />
-              
             </div>
             <div className="input-box">
               <label>Email</label>
@@ -188,7 +214,6 @@ export default function AnimatedLoginRegister() {
                 }
                 required
               />
-              
             </div>
             {/* <div className="input-box">
               <input
@@ -229,7 +254,6 @@ export default function AnimatedLoginRegister() {
                 }
                 required
               />
-              
             </div>
             <div className="input-box">
               <label>Poste</label>
@@ -246,9 +270,16 @@ export default function AnimatedLoginRegister() {
                 <option value="auditeur">Auditeur</option>
                 <option value="responsable">Responsable SMSI</option>
               </select>
-              
             </div>
-            <button type="submit" className="btn">Sign Up</button>
+            {/* <button type="submit" className="btn">Sign Up</button> */}
+            <button
+              type="button"
+              className="btn"
+              onClick={sendVerificationCode}
+              disabled={sendingCode}
+            >
+              {sendingCode ? " Send..." : codeSent ? "Renvoyer" : "Send code"}
+            </button>
             <div className="logreg-link">
               <p>
                 Already have an account?{" "}
