@@ -17,18 +17,22 @@ import ListAudit from "../views/admin/ListAudit.js";
 import ListUsers from "../views/admin/ListUsers.js";
 import CalenderAudit from "../views/admin/CalenderAudit.js";
 import AuditChecklist from "../views/admin/AuditChecklist.js";
+import ListCheklist from "views/admin/ListCheklist.js";
 import Rapports from "../views/admin/Rapports.js";
 import NonConformities from "../views/admin/NonConformities.js";
 import PlanAction from "../views/admin/PlanAction.js";
+import { ChecklistProvider } from "contexts/ChecklistContext";
 // import Previlege from "../views/admin/Previlege";
 
 export default function Admin() {
   return (
     <>
       <Sidebar />
+      <ChecklistProvider>
       <div className="relative md:ml-64 bg-blueGray-100">
         <AdminNavbar />
         <HeaderStats />
+        
         <div className="px-4 md:px-10 mx-auto w-full -m-24">
           <Switch>
             <Route path="/admin/dashboard" component={Dashboard} />
@@ -36,6 +40,7 @@ export default function Admin() {
             <Route path="/admin/settings" component={Settings} />
             <Route path="/admin/tables" component={Tables} />
             <Route path="/admin/AuditChecklist" component={AuditChecklist} />
+            <Route path="/admin/ListCheklist" exact component={ListCheklist} />
             <Route path="/admin/Rapports" component={Rapports} />
             <Route path="/admin/NonConformities" component={NonConformities} />
             <Route path="/admin/PlanAction" component={PlanAction} />
@@ -49,6 +54,7 @@ export default function Admin() {
           <FooterAdmin />
         </div>
       </div>
+    </ChecklistProvider>
     </>
   );
 }

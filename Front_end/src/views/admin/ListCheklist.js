@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import { FaEdit } from "react-icons/fa";
 import { RiDeleteBin5Fill } from "react-icons/ri";
+import { ChecklistContext } from "../../contexts/ChecklistContext";
 
 const modalOverlayStyle = {
   position: "fixed",
@@ -24,75 +25,32 @@ const modalContentStyle = {
   maxHeight: "80vh",
   fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
 };
-// useEffect(() => {
-//   axios.get("http://localhost:8080/api/checklists")
-//     .then(response => {
-//       setSavedChecklists(response.data);
-
-//       const controls = response.data.flatMap(cl =>
-//         cl.items.map(item => ({
-//           ...item,
-//           checklistName: cl.name,
-//           checklistId: cl.id,
-//         }))
-//       );
-
-//       setAllControls(controls);
-//     })
-//     .catch(error => {
-//       console.error("Erreur lors du chargement des checklists :", error);
-//     });
-// }, []);
-
-const exampleSavedChecklists = [
-  {
-    id: 123456789,
-    name: "Exemple Checklist",
-    items: [
-      {
-        id: 1,
-        text: "La politique est-elle documentée et approuvée par la direction?",
-        status: "pending",
-        constat: "Non documentée",
-        recommendation: "Documenter la politique rapidement",
-        preuve: "Absence de document",
-      },
-      {
-        id: 2,
-        text: "La politique est-elle communiquée à tous les employés?",
-        status: "compliant",
-        constat: "Communiquée par email",
-        recommendation: "Continuer la communication régulière",
-        preuve: "Emails archivés",
-      },
-    ],
-  },
-];
 
 export default function ListCheklist() {
-  const [savedChecklists, setSavedChecklists] = useState([]);
+  const { savedChecklists, saveCurrentChecklist } =
+    useContext(ChecklistContext);
   const [selectedChecklist, setSelectedChecklist] = useState(null);
   const [editControl, setEditControl] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [checklistName, setChecklistName] = useState("");
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("savedChecklists");
-    if (saved) {
-      const checklists = JSON.parse(saved);
-      setSavedChecklists(checklists);
-    } else {
-      localStorage.setItem(
-        "savedChecklists",
-        JSON.stringify(exampleSavedChecklists)
-      );
-      setSavedChecklists(exampleSavedChecklists);
-    }
-  }, []);
 
   const handleEditClick = (control) => {
     setEditControl({ ...control });
     setIsEditing(true);
+  };
+
+  const handleCompleteChecklist = () => {
+    if (!selectedChecklist) return;
+    const name = prompt(
+      "Entrez le nom pour la checklist complétée:",
+      selectedChecklist ? selectedChecklist.name : ""
+    );
+    if (name) {
+      saveCurrentChecklist(name, selectedChecklist.items);
+      alert("Checklist complétée et sauvegardée avec succès.");
+    }
   };
 
   const handleEditChange = (field, value) => {
@@ -101,19 +59,16 @@ export default function ListCheklist() {
 
   const handleSaveEdit = () => {
     if (!selectedChecklist) return;
-    // Update control in selectedChecklist
     const updatedItems = selectedChecklist.items.map((item) =>
       item.id === editControl.id ? editControl : item
     );
     const updatedChecklist = { ...selectedChecklist, items: updatedItems };
 
-    // Update savedChecklists
     const updatedChecklists = savedChecklists.map((cl) =>
       cl.id === updatedChecklist.id ? updatedChecklist : cl
     );
-    setSavedChecklists(updatedChecklists);
     localStorage.setItem("savedChecklists", JSON.stringify(updatedChecklists));
-
+    // Ideally update context or reload to reflect changes
     setIsEditing(false);
     setEditControl(null);
     setSelectedChecklist(updatedChecklist);
@@ -129,29 +84,26 @@ export default function ListCheklist() {
     setCurrentCategoryIndex(0); // Reset pagination on checklist change
   };
 
-  const handleDeleteItem = (itemId) => {
-    if (!selectedChecklist) return;
-    if (window.confirm("Voulez-vous vraiment supprimer ce contrôle ?")) {
-      const updatedItems = selectedChecklist.items.filter(
-        (item) => item.id !== itemId
-      );
-      const updatedChecklist = { ...selectedChecklist, items: updatedItems };
-      const updatedChecklists = savedChecklists.map((cl) =>
-        cl.id === updatedChecklist.id ? updatedChecklist : cl
-      );
-      setSavedChecklists(updatedChecklists);
-      localStorage.setItem(
-        "savedChecklists",
-        JSON.stringify(updatedChecklists)
-      );
-      setSelectedChecklist(updatedChecklist);
-    }
-  };
-
   const handleBackToList = () => {
     setSelectedChecklist(null);
   };
 
+  const openSaveModal = () => {
+    setChecklistName(selectedChecklist ? selectedChecklist.name : "");
+    setShowSaveModal(true);
+  };
+
+  const closeSaveModal = () => {
+    setShowSaveModal(false);
+    setChecklistName("");
+  };
+
+  const handleSaveChecklist = () => {
+    if (!selectedChecklist) return;
+    saveCurrentChecklist(checklistName, selectedChecklist.items);
+    closeSaveModal();
+    alert("Checklist sauvegardée avec succès.");
+  };
   // Extract categories from selectedChecklist items
   const categories = selectedChecklist
     ? Array.from(
@@ -193,7 +145,7 @@ export default function ListCheklist() {
     <>
       <div className="flex flex-wrap">
         <div className="w-full px-4">
-          <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded p-4">
+          <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded p-4 yellow-glow-container">
             <h3 className="text-xl font-semibold mb-4">Liste des Checklists</h3>
             {!selectedChecklist && (
               <ul className="list-disc pl-5 mb-4">
@@ -203,7 +155,10 @@ export default function ListCheklist() {
                     className="cursor-pointer text-blue-600 hover:underline"
                     onClick={() => handleChecklistClick(checklist)}
                   >
-                    {checklist.name}
+                    {checklist.name}{" "}
+                    <span className="text-xs text-gray-500">
+                      ({new Date(checklist.savedAt).toLocaleString()})
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -211,22 +166,29 @@ export default function ListCheklist() {
 
             {selectedChecklist && (
               <>
-                <button
-                  className="mb-4 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
-                  onClick={handleBackToList}
-                >
-                  Retour à la liste
-                </button>
+                <div className="flex justify-between items-center mb-4">
+                  <button
+                    className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
+                    onClick={handleBackToList}
+                  >
+                    Retour à la liste
+                  </button>
+                  {/* Category name display */}
+                  <div className="mb-2 font-semibold">
+                    Catégorie: {categories[currentCategoryIndex]}
+                  </div>
 
-                {/* Category name display */}
-                <div className="mb-2 font-semibold">
-                  Catégorie: {categories[currentCategoryIndex]}
+                  <button
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    onClick={openSaveModal}
+                  >
+                    Sauvegarder la checklist
+                  </button>
                 </div>
 
                 <table className="min-w-full table-auto border-collapse border border-gray-300 mb-4">
                   <thead>
                     <tr className="bg-gray-100">
-                      
                       <th className="border border-gray-300 px-4 py-2 text-left">
                         Contrôle
                       </th>
@@ -263,8 +225,6 @@ export default function ListCheklist() {
                                     key={item.id}
                                     className="border border-gray-300"
                                   >
-                                    
-                                    
                                     {idx === 0 && (
                                       <td
                                         className="border border-gray-300 px-4 py-2"
@@ -296,7 +256,7 @@ export default function ListCheklist() {
                                       >
                                         <FaEdit />
                                       </button>
-                                      <button
+                                      {/* <button
                                         className="text-red-600 hover:text-red-800 ml-2"
                                         onClick={() =>
                                           handleDeleteItem(item.id)
@@ -304,7 +264,7 @@ export default function ListCheklist() {
                                         title="Supprimer"
                                       >
                                         <RiDeleteBin5Fill />
-                                      </button>
+                                      </button> */}
                                     </td>
                                   </tr>
                                 );
@@ -317,7 +277,6 @@ export default function ListCheklist() {
                     })()}
                   </tbody>
                 </table>
-
                 {/* Numeric pagination below the table */}
                 <div className="flex justify-center space-x-3 mt-4">
                   {categories.map((category, index) => (
@@ -341,7 +300,6 @@ export default function ListCheklist() {
                 </div>
               </>
             )}
-
             {isEditing && editControl && (
               <div style={modalOverlayStyle}>
                 <div style={modalContentStyle}>
@@ -414,6 +372,36 @@ export default function ListCheklist() {
                       onClick={handleSaveEdit}
                     >
                       Enregistrer
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+            {showSaveModal && (
+              <div style={modalOverlayStyle}>
+                <div style={modalContentStyle}>
+                  <h3 className="text-lg font-semibold mb-4">
+                    Nom de la checklist
+                  </h3>
+                  <input
+                    type="text"
+                    value={checklistName}
+                    onChange={(e) => setChecklistName(e.target.value)}
+                    placeholder="Entrez le nom de la checklist"
+                    className="w-full border border-gray-300 rounded-lg py-2 px-3 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <div className="flex justify-end space-x-4">
+                    <button
+                      onClick={closeSaveModal}
+                      className="bg-gray-200 text-gray-700 font-semibold py-2 px-6 rounded-lg hover:bg-gray-300"
+                    >
+                      Annuler
+                    </button>
+                    <button
+                      onClick={handleSaveChecklist}
+                      className="bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg hover:bg-blue-700"
+                    >
+                      Sauvegarder
                     </button>
                   </div>
                 </div>

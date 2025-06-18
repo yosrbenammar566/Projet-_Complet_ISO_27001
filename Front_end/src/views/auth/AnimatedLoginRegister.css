@@ -339,3 +339,35 @@ button:focus {
     0 0 10px #0ef,
     0 0 20px #0ef;
 }
+.code-input {
+  width: 3rem;
+  height: 3rem;
+  margin: 0.5rem;
+  font-size: 1.5rem;
+  text-align: center;
+  border: 2px solid #ccc;
+  border-radius: 0.5rem;
+  outline: none;
+  background-color: #fff;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Cadre lumineux au focus */
+.code-input:focus {
+  border-color: #00bfff; /* Bleu clair */
+  box-shadow: 0 0 8px #00bfff;
+}
+.glassmorphism {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 15px;
+  box-shadow: 0 4px 30px rgba(0, 255, 0, 0.3);
+}
+
+.glassmorphism {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}

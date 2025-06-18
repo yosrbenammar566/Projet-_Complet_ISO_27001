@@ -4,10 +4,13 @@ import { FaEdit } from "react-icons/fa";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import { toast } from "react-toastify";
 import { NonConformityContext } from "../../contexts/NonConformityContext";
+import { ChecklistContext } from "../../contexts/ChecklistContext";
 
 export default function AuditChecklist() {
   const [selectedControl, setSelectedControl] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+  const { saveCurrentChecklist } = useContext(ChecklistContext);
+  console.log('ChecklistContext:', ChecklistContext);
 
   const [checklistItems, setChecklistItems] = useState([]);
   const [newItem, setNewItem] = useState("");
@@ -167,6 +170,72 @@ export default function AuditChecklist() {
   const [showChecklistModal, setShowChecklistModal] = useState(false);
   const [selectedChecklist, setSelectedChecklist] = useState(null);
   const { addNonConformity } = useContext(NonConformityContext);
+    const [showSaveModal, setShowSaveModal] = useState(false);
+  const [checklistName, setChecklistName] = useState("");
+
+  const handleSaveChecklist1 = () => {
+    setShowSaveModal(true);
+  };
+
+  const confirmSaveChecklist = () => {
+    try {
+      setGlobalChecklist((prev) => {
+        // Update checklistItems to set category and control for each item
+        const updatedItemsWithCategoryAndControl = checklistItems.map(
+          (item) => ({
+            ...item,
+            category: selectedCategory || item.category || "Sans catégorie",
+            control: selectedControl || item.control || "Sans contrôle",
+          })
+        );
+
+        // Merge updatedItemsWithCategoryAndControl with existing items for the selected control
+        const existingControls = prev[selectedCategory] || {};
+        const mergedControls = {
+          ...existingControls,
+          [selectedControl]: updatedItemsWithCategoryAndControl,
+        };
+
+        const updatedGlobalChecklist = {
+          ...prev,
+          [selectedCategory]: mergedControls,
+        };
+
+        // Defensive check: ensure controls is an object and items is an array
+        const allItems = Object.entries(updatedGlobalChecklist).flatMap(
+          ([category, controls]) =>
+            controls && typeof controls === "object"
+              ? Object.entries(controls).flatMap(([control, items]) =>
+                  Array.isArray(items)
+                    ? items.map((item) => ({
+                        ...item,
+                        category: category,
+                        control: control,
+                      }))
+                    : []
+                )
+              : []
+        );
+
+        const newChecklist = {
+          id: Date.now(),
+          name: checklistName || "Checklist sans nom",
+          items: allItems,
+        };
+
+        saveCurrentChecklist(newChecklist.name, allItems);
+        toast.success("Checklist enregistrée dans le contexte !");
+         console.log("Checklist sauvegardée")
+        return updatedGlobalChecklist;
+      });
+    } catch (error) {
+      console.error("Erreur lors de la sauvegarde :", error);
+      alert("Une erreur est survenue lors de la sauvegarde.");
+    }
+    setShowSaveModal(false);
+    setChecklistName("");
+  };
+
 
   return (
     <div className="page-fade-in">
@@ -439,11 +508,69 @@ export default function AuditChecklist() {
                 <div className="text-center mt-6">
                   <button
                     className="welcome-button welcome-button-primary mr-1 mb-1"
-                    onClick={handleSaveChecklist}
+                    onClick={handleSaveChecklist1}
                   >
                     Sauvegarder la checklist
                   </button>
                 </div>
+                {showSaveModal && (
+                  <div
+                    style={{
+                      position: "fixed",
+                      inset: 0,
+                      backgroundColor: "rgba(0,0,0,0.6)",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      zIndex: 1000,
+                      animation: "fadeIn 0.3s ease-in-out",
+                    }}
+                  >
+                    <div
+                      style={{
+                        backgroundColor: "#f9fafb",
+                        borderRadius: "1rem",
+                        boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
+                        maxWidth: "40rem",
+                        width: "100%",
+                        padding: "2rem",
+                        overflow: "auto",
+                        maxHeight: "80vh",
+                        fontFamily:
+                          "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+                      }}
+                    >
+                      <h3 className="text-lg font-semibold mb-4">
+                        Nom de la checklist
+                      </h3>
+                      <input
+                        type="text"
+                        value={checklistName}
+                        onChange={(e) => setChecklistName(e.target.value)}
+                        placeholder="Entrez le nom de la checklist"
+                        className="w-full border border-gray-300 rounded-lg py-2 px-3 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                      <div className="flex justify-end space-x-4">
+                        <button
+                          onClick={() => {
+                            setShowSaveModal(false);
+                            setChecklistName("");
+                          }}
+                          className="bg-gray-200 text-gray-700 font-semibold py-2 px-6 rounded-lg hover:bg-gray-300"
+                        >
+                          Annuler
+                        </button>
+                        <button
+                          onClick={confirmSaveChecklist}
+                          className="welcome-button welcome-button-primary"
+                        >
+                          Sauvegarder
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
               </div>
             </React.Fragment>
           )}
