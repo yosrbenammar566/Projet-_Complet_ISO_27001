@@ -46,6 +46,7 @@ app.get('/api/test', (req, res) => {
 
 // ✅ Connexion aux routes (déclaration une seule fois)
 const userRoutes = require('./routes/users'); // ✅ UNE SEULE FOIS
+const authRoutes = require('./routes/auth');
 const auditRoutes = require('./routes/audits');
 const checklistRoutes = require("./routes/checklists");
 const actionRoutes = require('./routes/actions');
@@ -54,12 +55,13 @@ const controlsRoutes = require('./routes/controls');
 
 const rapportRoutes = require('./routes/rapports');
 const documentRoutes = require('./routes/documents');
-const mapRoutes = require('./routes/maps'); 
+const mapRoutes = require('./routes/maps');
 const calendrierRouter = require('./routes/calendrier');
 ;
 
 // ✅ Utilisation
 app.use('/api', userRoutes);
+app.use('/api', authRoutes);
 app.use('/api/audits', auditRoutes);
 app.use('/api/checklists', checklistRoutes);
 app.use('/api/actions', actionRoutes);

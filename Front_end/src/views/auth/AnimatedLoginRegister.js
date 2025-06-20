@@ -1,9 +1,10 @@
 // src/components/AnimatedLoginRegister/AnimatedLoginRegister.jsx
 
 import React, { useState } from "react";
-import { useLocation, useHistory } from "react-router-dom";
+import { useLocation, useHistory, useNavigate } from "react-router-dom";
 import "./AnimatedLoginRegister.css";
 import cyberImage from "../../assets/img/images6.jpeg";
+import { registerUser } from "Services/ApiUsers";
 console.log("✅ Ce fichier est utilisé dans App.js !");
 
 export default function AnimatedLoginRegister() {
@@ -17,7 +18,7 @@ export default function AnimatedLoginRegister() {
 
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [registerData, setRegisterData] = useState({
-    name: "",
+    username: "",
     email: "",
     password: "",
     poste: "",
@@ -50,7 +51,7 @@ export default function AnimatedLoginRegister() {
     e.preventDefault();
     try {
       const payload = {
-        username: registerData.name,
+        username: registerData.username,
         email: registerData.email,
         password: registerData.password,
         role: registerData.poste || "user",
@@ -72,25 +73,6 @@ export default function AnimatedLoginRegister() {
     }
   };
 
-  const handleSendCode = () => {
-    if (!registerData.email) {
-      alert("Veuillez entrer votre email.");
-    }
-    setSendingCode(true);
-    setTimeout(() => {
-      setSendingCode(false);
-      setCodeSent(true);
-      alert("Code de vérification simulé !");
-    }, 1000);
-  };
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setRegisterData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
   const sendVerificationCode = async () => {
     if (!registerData.email) {
       alert(
@@ -106,7 +88,10 @@ export default function AnimatedLoginRegister() {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       setCodeSent(true);
       alert("Code de vérification envoyé à votre email.");
-      history.push("/auth/CodeEmail");
+      await registerUser(registerData)
+      history.push("/auth/CodeEmail", {
+        email: registerData.email,
+      });
     } catch (error) {
       console.error("Erreur lors de l'envoi du code de vérification:", error);
       alert("Erreur lors de l'envoi du code de vérification.");
@@ -192,13 +177,13 @@ export default function AnimatedLoginRegister() {
           <h1>Sign Up</h1>
           <form onSubmit={handleRegister}>
             <div className="input-box">
-              <label>Nom</label>
+              <label>Nom d'utilisateur</label>
               <input
                 type="text"
-                name="name"
-                value={registerData.name}
+                name="username"
+                value={registerData.username}
                 onChange={(e) =>
-                  setRegisterData({ ...registerData, name: e.target.value })
+                  setRegisterData({ ...registerData, username: e.target.value })
                 }
                 required
               />

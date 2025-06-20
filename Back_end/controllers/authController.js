@@ -1,41 +1,75 @@
-const User = require('../models/Users');
+const User = require('../models/users');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const { sendVerificationCode } = require('../utils/sendEmail');
 
+// 🔐 POST - Connexion
 exports.login = async (req, res) => {
+  const { email, password } = req.body;
+
   try {
-    const { email, password } = req.body;
-
-    // 1. Vérifier si l'utilisateur existe
     const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(401).json({ message: "Email ou mot de passe incorrect" });
+    if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
+      return res.status(401).json({ message: "Email ou mot de passe incorrect." });
     }
 
-    // 2. Vérifier le mot de passe
-    const isMatch = await user.comparePassword(password);
-    if (!isMatch) {
-      return res.status(401).json({ message: "Email ou mot de passe incorrect" });
-    }
-
-    // 3. Générer un token JWT
-    const token = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: '1h' }
-    );
-
-    // 4. Envoyer la réponse
-    res.json({
-      token,
-      user: {
-        id: user._id,
-        email: user.email,
-        role: user.role
-      }
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || "devsecret", {
+      expiresIn: "1d",
     });
 
+    res.json({
+      _id: user._id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+      token,
+    });
   } catch (err) {
-    res.status(500).json({ message: "Erreur serveur" });
+    res.status(500).json({ message: "Erreur serveur", error: err.message });
   }
+};
+
+exports.register = async (req, res) => {
+  const { username, email, password, role } = req.body;
+
+  const existing = await User.findOne({ email });
+  if (existing) return res.status(400).send("User already exists");
+
+  const hashed = await bcrypt.hash(password, 10);
+  const code = Math.floor(1000 + Math.random() * 9000).toString();
+  const expires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+  const user = new User({
+    username,
+    email,
+    passwordHash: hashed,
+    role: role || "user",
+    verificationCode: code,
+    verificationCodeExpires: expires
+  });
+
+  await user.save();
+  await sendVerificationCode(email, code);
+
+  res.status(201).send("Verification code sent to email.");
+};
+
+exports.verifyCode = async (req, res) => {
+  const { email, code } = req.body;
+
+  const user = await User.findOne({ email });
+  if (!user) return res.status(404).send("User not found");
+
+  const isExpired = user.verificationCodeExpires < new Date();
+  if (isExpired) return res.status(400).send("Code expired");
+
+  if (user.verificationCode !== code)
+    return res.status(400).send("Invalid code");
+
+  user.isVerified = true;
+  user.verificationCode = null;
+  user.verificationCodeExpires = null;
+  await user.save();
+
+  res.send("Email verified successfully.");
 };

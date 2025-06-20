@@ -1,13 +1,28 @@
-import React, { useState, useRef } from "react";
-import { useHistory } from "react-router-dom";
+import React, { useState, useRef, useEffect } from "react";
+import { useHistory, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import cyberImage from "../../assets/img/images6.jpeg";
 import "./AnimatedLoginRegister.css"; // Ton fichier CSS déjà stylisé
+import { verifyCode } from "Services/ApiUsers";
 
 export default function CodeEmail() {
   const [code, setCode] = useState(["", "", "", ""]);
   const inputsRef = useRef([]);
   const history = useHistory();
+  const location = useLocation();
+  const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    const email = location.state?.email || ""
+    console.log(location)
+    if (!email) {
+      debugger
+      alert("Aucune adresse e-mail fournie. Veuillez revenir en arrière.");
+      history.push("/auth/animated");
+      return;
+    }
+    setEmail(email);
+  }, []);
 
   const handleChange = (e, index) => {
     const val = e.target.value;
@@ -31,14 +46,20 @@ export default function CodeEmail() {
     alert("Code renvoyé à votre adresse e-mail.");
   };
 
-  const handleVerify = () => {
-    const enteredCode = code.join("");
-    if (enteredCode.length < 4) {
-      alert("Veuillez entrer le code complet à 4 chiffres.");
-      return;
+  const handleVerify = async () => {
+    try {
+      const enteredCode = code.join("");
+      if (enteredCode.length < 4) {
+        alert("Veuillez entrer le code complet à 4 chiffres.");
+        return;
+      }
+      await verifyCode(email, enteredCode)
+      alert(`Code vérifié: ${enteredCode}`);
+      history.push("/auth/animated");
+    } catch (error) {
+      console.error("Erreur lors de la vérification du code:", error);
+      alert("Erreur lors de la vérification du code.");
     }
-    alert(`Code vérifié: ${enteredCode}`);
-    history.push("/auth/animated");
   };
 
   return (
@@ -74,7 +95,7 @@ export default function CodeEmail() {
               </h2>
               <p className="text-center text-sm text-white mb-6">
                 Nous avons envoyé un code de confirmation à quatre chiffres à <br />
-                <strong className="text-green-300 logreg-link">bensalahors013@gmail.com</strong>.
+                <strong className="text-green-300 logreg-link">{email}</strong>.
                 <br /> Entrez le code ci-dessous pour confirmer votre adresse e-mail.
               </p>
 

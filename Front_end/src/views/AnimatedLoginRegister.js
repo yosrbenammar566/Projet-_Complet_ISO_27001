@@ -19,8 +19,7 @@ export default function AnimatedLoginRegister() {
     name: "",
     email: "",
     password: "",
-    poste: "",
-    verificationCode: "",
+    role: "",
   });
   const [codeSent, setCodeSent] = useState(false);
   const [sendingCode, setSendingCode] = useState(false);
@@ -52,7 +51,7 @@ export default function AnimatedLoginRegister() {
         username: registerData.name,
         email: registerData.email,
         password: registerData.password,
-        role: registerData.poste || "user",
+        role: registerData.role || "user",
       };
       const res = await fetch("http://localhost:5000/api/register", {
         method: "POST",
@@ -74,7 +73,7 @@ export default function AnimatedLoginRegister() {
   const handleSendCode = () => {
     if (!registerData.email) {
       alert("Veuillez entrer votre email.");
-    
+
     }
     setSendingCode(true);
     setTimeout(() => {
@@ -244,8 +243,8 @@ export default function AnimatedLoginRegister() {
                     {sendingCode
                       ? "Envoi..."
                       : codeSent
-                      ? "Renvoyer"
-                      : "Envoyer le code"}
+                        ? "Renvoyer"
+                        : "Envoyer le code"}
                   </button>
                 </div>
 
@@ -264,19 +263,19 @@ export default function AnimatedLoginRegister() {
 
                 <div className="input-box">
                   <select
-                    name="poste"
-                    value={registerData.poste}
+                    name="role"
+                    value={registerData.role}
                     onChange={(e) =>
-                      setRegisterData({ ...registerData, poste: e.target.value })
+                      setRegisterData({ ...registerData, role: e.target.value })
                     }
                     required
                   >
-                    <option value="">-- Sélectionner un poste --</option>
+                    <option value="">-- Sélectionner un role --</option>
                     <option value="admin">Consultant</option>
                     <option value="auditeur">Auditeur</option>
                     <option value="responsable">Responsable SMSI</option>
                   </select>
-                  <label>Poste</label>
+                  <label>role</label>
                 </div>
 
                 <button type="submit" className="btn w-full">Sign Up</button>
