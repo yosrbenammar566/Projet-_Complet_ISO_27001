@@ -38,7 +38,7 @@ export default function CodeEmail() {
       return;
     }
     alert(`Code vérifié: ${enteredCode}`);
-    history.push("/auth/login");
+    history.push("/auth/animated");
   };
 
   return (
@@ -89,7 +89,7 @@ export default function CodeEmail() {
                     onKeyDown={(e) => handleKeyDown(e, idx)}
                     ref={(el) => (inputsRef.current[idx] = el)}
                     className="w-12 h-12 text-center border border-green-400 rounded-md text-lg 
-                               text-white bg-transparent focus:outline-none focus:ring-2 focus:ring-green-300
+                               bg-transparent focus:outline-none focus:ring-2 focus:ring-green-300
                                placeholder-gray-400 shadow-md"
                   />
                 ))}
