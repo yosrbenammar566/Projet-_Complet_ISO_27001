@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { PlanActionContext } from "../../contexts/PlanActionContext";
 
 export default function NonConformities() {
-  const [showAddForm, setShowAddForm] = useState(false);
+ const [showAddForm, setShowAddForm] = useState(false);
   // Données d'exemple avec auditType ajouté
   const [nonConformities, setNonConformities] = useState([
     {
@@ -203,7 +203,6 @@ export default function NonConformities() {
   const filteredNonConformities = nonConformities;
 
   console.log("Liste filtrée des non-conformités :", filteredNonConformities);
-
   return (
     <div className="page-fade-in">
       <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-white mt-50 red-glow-container">
@@ -414,7 +413,7 @@ export default function NonConformities() {
                                 </div>
                                 <div className="flex justify-end">
                                   <button
-                                    className="bg-gray-400 text-white active:bg-gray-500 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-2 mb-1 ease-linear transition-all duration-150"
+                                    className="mr-3 inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-red-600 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500mr-2 mb-1"
                                     type="button"
                                     onClick={() => {
                                       setEditingNonConformity(null);
@@ -424,7 +423,7 @@ export default function NonConformities() {
                                     Annuler
                                   </button>
                                   <button
-                                    className="bg-blue-500 text-white active:bg-blue-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                                    className="welcome-button welcome-button-primary mr-1 mb-1"
                                     type="button"
                                     onClick={handleSave}
                                   >

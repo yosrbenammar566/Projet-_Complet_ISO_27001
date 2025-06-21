@@ -2,8 +2,11 @@ const mongoose = require('mongoose');
 
 const actionSchema = new mongoose.Schema({
   action: { type: String, required: true },
+  description: { type: String },
   responsible: { type: String, required: true },
   plannedDate: { type: Date, required: true },
+   recommendation: { type: String },
+  correctionDate: { type: Date }, 
   status: {
     type: String,
     enum: ["À faire", "En cours", "Terminé"],

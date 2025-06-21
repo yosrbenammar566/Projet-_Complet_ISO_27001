@@ -1,16 +1,29 @@
 const express = require("express");
 const router = express.Router();
-const Action = require("../models/Action");
+const {
+  getActions,
+  createAction,
+  deleteAction,
+  getActionById, 
+  updateAction,// ← ✅ la nouvelle fonction qu'on ajoute
+} = require("../controllers/actionController");
 
-// ✅ Route pour récupérer toutes les actions avec leurs non-conformités liées
-router.get("/", async (req, res) => {
-  try {
-    const actions = await Action.find().populate("nonConformities");
-    res.json(actions);
-  } catch (err) {
-    console.error("Erreur lors du chargement des actions :", err);
-    res.status(500).json({ message: "Erreur serveur" });
-  }
-});
+
+
+// ✅ Toutes les actions
+router.get("/", getActions);
+
+// ✅ Créer une action
+router.post("/", createAction);
+
+// ✅ Supprimer une action
+router.delete("/:id", deleteAction);
+
+// ✅ Nouvelle route : Obtenir une seule action par ID avec ses non-conformités
+router.get("/:id", getActionById);
+// ✅ Modifier une action
+router.put("/:id", updateAction);
+
 
 module.exports = router;
+

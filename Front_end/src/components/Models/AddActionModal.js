@@ -68,7 +68,7 @@ export default function AddActionModal({
             <input
               type="text"
               name="nonConformity"
-              value={formData.nonConformity || ""}
+              value={formData.nonConformities || ""}
               readOnly
               disabled
               className="w-full border border-gray-300 rounded-lg py-3 px-4 bg-gray-100 text-gray-600"

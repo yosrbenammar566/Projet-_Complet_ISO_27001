@@ -271,7 +271,7 @@ export default function AnimatedLoginRegister() {
                     required
                   >
                     <option value="">-- Sélectionner un role --</option>
-                    <option value="admin">Consultant</option>
+                    <option value="Consultant">Consultant</option>
                     <option value="auditeur">Auditeur</option>
                     <option value="responsable">Responsable SMSI</option>
                   </select>

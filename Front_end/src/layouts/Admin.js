@@ -17,6 +17,7 @@ import ListAudit from "../views/admin/ListAudit.js";
 import ListUsers from "../views/admin/ListUsers.js";
 import CalenderAudit from "../views/admin/CalenderAudit.js";
 import AuditChecklist from "../views/admin/AuditChecklist.js";
+import ListPlanAction from "views/admin/ListPlanAction";
 import ListCheklist from "views/admin/ListCheklist.js";
 import Rapports from "../views/admin/Rapports.js";
 import NonConformities from "../views/admin/NonConformities.js";
@@ -40,6 +41,7 @@ export default function Admin() {
             <Route path="/admin/settings" component={Settings} />
             <Route path="/admin/tables" component={Tables} />
             <Route path="/admin/AuditChecklist" component={AuditChecklist} />
+           <Route path="/admin/ListPlanAction" exact component={ListPlanAction} />
             <Route path="/admin/ListCheklist" exact component={ListCheklist} />
             <Route path="/admin/Rapports" component={Rapports} />
             <Route path="/admin/NonConformities" component={NonConformities} />

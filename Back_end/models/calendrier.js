@@ -14,4 +14,6 @@ const eventSchema = new mongoose.Schema({
   status: { type: String, default: "planned" }
 });
 
-module.exports = mongoose.model('Event', eventSchema);
+// 👇 à la fin du fichier
+module.exports = mongoose.model('Calendrier', eventSchema); // ✅ remplace "Event" par "Calendrier"
+

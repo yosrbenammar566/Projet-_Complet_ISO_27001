@@ -77,26 +77,30 @@ export default function CalendarAudit() {
     priority: "medium",
   });
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:5000/api/calendrier"
-        ); // à adapter selon ton backend
-        const eventsFromServer = response.data.map((event) => ({
-          ...event,
-          start: new Date(event.start),
-          end: new Date(event.end),
-        }));
-        setEvents(eventsFromServer);
-      } catch (error) {
-        console.error("Erreur lors du chargement des événements:", error);
-        toast.error("❌ Échec du chargement des événements !");
-      }
-    };
+useEffect(() => {
+  const fetchEvents = async () => {
+    try {
+      console.log("📡 Requête envoyée vers /api/calendrier");
 
-    fetchEvents();
-  }, []);
+      const response = await axios.get("http://localhost:5000/api/calendar-events");
+
+ // à adapter selon ton backend
+      const eventsFromServer = response.data.map((event) => ({
+        ...event,
+        start: new Date(event.start),
+        end: new Date(event.end),
+      }));
+      setEvents(eventsFromServer);
+      console.log("✅ Événements reçus depuis backend :", eventsFromServer);
+    } catch (error) {
+      console.error("Erreur lors du chargement des événements:", error);
+      toast.error("❌ Échec du chargement des événements !");
+    }
+  };
+
+  fetchEvents();
+}, []);
+
 
   // Filtrer les événements en fonction de la recherche
   const filteredEvents = events.filter((event) =>
@@ -160,14 +164,12 @@ export default function CalendarAudit() {
     handleDateClick(slotInfo);
   };
 
-  const handleSelectEvent = (event) => {
-    const confirmDelete = window.confirm(
-      `🗑️ Supprimer l'événement : "${event.title}" ?`
-    );
-    if (confirmDelete) {
-      handleDeleteEvent(event._id);
-    }
-  };
+ const handleSelectEvent = (event) => {
+  const confirmDelete = window.confirm(`🗑️ Supprimer l'événement : "${event.title}" ?`);
+  if (confirmDelete) {
+    handleDeleteEvent(event._id);
+  }
+};
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -176,70 +178,75 @@ export default function CalendarAudit() {
       [name]: value,
     });
   };
+  
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const newEvent = {
-      title: auditData.auditName,
-      start: new Date(auditData.auditDate),
-      end: new Date(auditData.auditDate),
-      type: auditData.auditType,
-      priority: auditData.priority,
-      auditor: auditData.auditor,
-      department: auditData.department,
-      description: auditData.description,
-      scope: auditData.scope,
-      checklist: auditData.checklist,
-      status: auditData.status,
+  // 🔧 Créer une date JS complète avec heure
+  const date = new Date(auditData.auditDate);
+  date.setHours(12, 0, 0); // Ajoute 12h (midi) pour éviter le problème d'affichage
+
+  const newEvent = {
+    title: auditData.auditName,
+    start: date,
+    end: date,
+    type: auditData.auditType,
+    priority: auditData.priority,
+    auditor: auditData.auditor,
+    department: auditData.department,
+    description: auditData.description,
+    scope: auditData.scope,
+    checklist: auditData.checklist,
+    status: auditData.status,
+  };
+
+  try {
+    const response = await axios.post("http://localhost:5000/api/calendar-events", newEvent);
+
+
+    // 🔍 Vérifie que les dates reviennent bien dans la réponse
+    const savedEvent = {
+      ...newEvent, // ← Utilise newEvent directement
+      _id: response.data._id // on garde l'id retourné du backend
     };
 
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/api/calendrier",
-        newEvent
-      );
-      const savedEvent = {
-        ...response.data,
-        start: new Date(response.data.start),
-        end: new Date(response.data.end),
-      };
+    setEvents([...events, savedEvent]);
+    toast.success("✅ Audit planifié avec succès !");
+    setShowModal(false);
 
-      setEvents([...events, savedEvent]);
-      toast.success("✅ Audit planifié avec succès !");
-      setShowModal(false);
+    // Réinitialiser le formulaire
+    setAuditData({
+      auditName: "",
+      auditType: "internal",
+      auditDate: "",
+      auditor: "",
+      department: "",
+      scope: "",
+      description: "",
+      checklist: [],
+      status: "planned",
+      priority: "medium",
+    });
+  } catch (error) {
+    console.error("Erreur lors de l'ajout de l'événement:", error);
+    toast.error("❌ Échec de la planification !");
+  }
+};
 
-      setAuditData({
-        auditName: "",
-        auditType: "internal",
-        auditDate: "",
-        auditor: "",
-        department: "",
-        scope: "",
-        description: "",
-        checklist: [],
-        status: "planned",
-        priority: "medium",
-      });
-    } catch (error) {
-      console.error("Erreur lors de l'ajout de l'événement:", error);
-      toast.error("❌ Échec de la planification !");
-    }
-  };
 
-  const handleDeleteEvent = async (eventId) => {
-    try {
-      const response = await axios.delete(
-        `http://localhost:5000/api/calendrier/${eventId}`
-      );
-      setEvents(events.filter((e) => e._id !== eventId));
-      toast.success("🗑️ Événement supprimé !");
-    } catch (error) {
-      console.error("Erreur suppression :", error);
-      toast.error("❌ Suppression échouée !");
-    }
-  };
+const handleDeleteEvent = async (eventId) => {
+  try {
+    const response = await axios.delete(`http://localhost:5000/api/calendrier/${eventId}`);
+    setEvents(events.filter((e) => e._id !== eventId));
+    toast.success("🗑️ Événement supprimé !");
+  } catch (error) {
+    console.error("Erreur suppression :", error);
+    toast.error("❌ Suppression échouée !");
+  }
+};
 
+console.log("Événements affichés :", events);
   return (
     <div className="flex flex-wrap ">
       <div className="w-full px-4 ">

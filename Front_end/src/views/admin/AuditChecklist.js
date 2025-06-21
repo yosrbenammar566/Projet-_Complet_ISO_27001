@@ -10,7 +10,7 @@ export default function AuditChecklist() {
   const [selectedControl, setSelectedControl] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const { saveCurrentChecklist } = useContext(ChecklistContext);
-  console.log('ChecklistContext:', ChecklistContext);
+  // console.log('ChecklistContext:', ChecklistContext);
 
   const [checklistItems, setChecklistItems] = useState([]);
   const [newItem, setNewItem] = useState("");
@@ -170,71 +170,71 @@ export default function AuditChecklist() {
   const [showChecklistModal, setShowChecklistModal] = useState(false);
   const [selectedChecklist, setSelectedChecklist] = useState(null);
   const { addNonConformity } = useContext(NonConformityContext);
-    const [showSaveModal, setShowSaveModal] = useState(false);
-  const [checklistName, setChecklistName] = useState("");
+  //   const [showSaveModal, setShowSaveModal] = useState(false);
+  // const [checklistName, setChecklistName] = useState("");
 
-  const handleSaveChecklist1 = () => {
-    setShowSaveModal(true);
-  };
+  // const handleSaveChecklist1 = () => {
+  //   setShowSaveModal(true);
+  // };
 
-  const confirmSaveChecklist = () => {
-    try {
-      setGlobalChecklist((prev) => {
-        // Update checklistItems to set category and control for each item
-        const updatedItemsWithCategoryAndControl = checklistItems.map(
-          (item) => ({
-            ...item,
-            category: selectedCategory || item.category || "Sans catégorie",
-            control: selectedControl || item.control || "Sans contrôle",
-          })
-        );
+  // const confirmSaveChecklist = () => {
+  //   try {
+  //     setGlobalChecklist((prev) => {
+  //       // Update checklistItems to set category and control for each item
+  //       const updatedItemsWithCategoryAndControl = checklistItems.map(
+  //         (item) => ({
+  //           ...item,
+  //           category: selectedCategory || item.category || "Sans catégorie",
+  //           control: selectedControl || item.control || "Sans contrôle",
+  //         })
+  //       );
 
-        // Merge updatedItemsWithCategoryAndControl with existing items for the selected control
-        const existingControls = prev[selectedCategory] || {};
-        const mergedControls = {
-          ...existingControls,
-          [selectedControl]: updatedItemsWithCategoryAndControl,
-        };
+  //       // Merge updatedItemsWithCategoryAndControl with existing items for the selected control
+  //       const existingControls = prev[selectedCategory] || {};
+  //       const mergedControls = {
+  //         ...existingControls,
+  //         [selectedControl]: updatedItemsWithCategoryAndControl,
+  //       };
 
-        const updatedGlobalChecklist = {
-          ...prev,
-          [selectedCategory]: mergedControls,
-        };
+  //       const updatedGlobalChecklist = {
+  //         ...prev,
+  //         [selectedCategory]: mergedControls,
+  //       };
 
-        // Defensive check: ensure controls is an object and items is an array
-        const allItems = Object.entries(updatedGlobalChecklist).flatMap(
-          ([category, controls]) =>
-            controls && typeof controls === "object"
-              ? Object.entries(controls).flatMap(([control, items]) =>
-                  Array.isArray(items)
-                    ? items.map((item) => ({
-                        ...item,
-                        category: category,
-                        control: control,
-                      }))
-                    : []
-                )
-              : []
-        );
+  //       // Defensive check: ensure controls is an object and items is an array
+  //       const allItems = Object.entries(updatedGlobalChecklist).flatMap(
+  //         ([category, controls]) =>
+  //           controls && typeof controls === "object"
+  //             ? Object.entries(controls).flatMap(([control, items]) =>
+  //                 Array.isArray(items)
+  //                   ? items.map((item) => ({
+  //                       ...item,
+  //                       category: category,
+  //                       control: control,
+  //                     }))
+  //                   : []
+  //               )
+  //             : []
+  //       );
 
-        const newChecklist = {
-          id: Date.now(),
-          name: checklistName || "Checklist sans nom",
-          items: allItems,
-        };
+  //       const newChecklist = {
+  //         id: Date.now(),
+  //         name: checklistName || "Checklist sans nom",
+  //         items: allItems,
+  //       };
 
-        saveCurrentChecklist(newChecklist.name, allItems);
-        toast.success("Checklist enregistrée dans le contexte !");
-         console.log("Checklist sauvegardée")
-        return updatedGlobalChecklist;
-      });
-    } catch (error) {
-      console.error("Erreur lors de la sauvegarde :", error);
-      alert("Une erreur est survenue lors de la sauvegarde.");
-    }
-    setShowSaveModal(false);
-    setChecklistName("");
-  };
+  //       saveCurrentChecklist(newChecklist.name, allItems);
+  //       toast.success("Checklist enregistrée dans le contexte !");
+  //        console.log("Checklist sauvegardée")
+  //       return updatedGlobalChecklist;
+  //     });
+  //   } catch (error) {
+  //     console.error("Erreur lors de la sauvegarde :", error);
+  //     alert("Une erreur est survenue lors de la sauvegarde.");
+  //   }
+  //   setShowSaveModal(false);
+  //   setChecklistName("");
+  // };
 
 
   return (
@@ -508,12 +508,12 @@ export default function AuditChecklist() {
                 <div className="text-center mt-6">
                   <button
                     className="welcome-button welcome-button-primary mr-1 mb-1"
-                    onClick={handleSaveChecklist1}
+                    onClick={handleSaveChecklist}
                   >
                     Sauvegarder la checklist
                   </button>
                 </div>
-                {showSaveModal && (
+                {/* {showSaveModal && (
                   <div
                     style={{
                       position: "fixed",
@@ -569,7 +569,7 @@ export default function AuditChecklist() {
                       </div>
                     </div>
                   </div>
-                )}
+                )} */}
 
               </div>
             </React.Fragment>

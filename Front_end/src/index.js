@@ -16,6 +16,9 @@ import Landing from './views/Landing.js';
 import Profile from './views/Profile.js';
 import Welcome from './views/Welcome.js';
 import FormAddAudit from './views/FormAddAudit.js';
+import CalendarAudit from './views/admin/CalenderAudit';
+
+
 import { PlanActionProvider } from './contexts/PlanActionContext';
 import { NonConformityProvider } from './contexts/NonConformityContext';
 
@@ -34,6 +37,8 @@ ReactDOM.render(
         <Route path="/landing" component={Landing} />
         <Route path="/profile" component={Profile} />
         <Route path="/FormAddAudit" component={FormAddAudit} />
+        <Route path="/calendar" component={CalendarAudit} />
+
         <Route exact path="/" component={Welcome} />
 
         {/* redirection si aucun match */}

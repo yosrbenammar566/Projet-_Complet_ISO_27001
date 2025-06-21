@@ -6,6 +6,7 @@ export const PlanActionProvider = ({ children }) => {
   const [actions, setActions] = useState([]);
   const [savedPlans, setSavedPlans] = useState([]);
   const [currentPlan, setCurrentPlan] = useState(null);
+  const [refreshFlag, setRefreshFlag] = useState(false); // 🔁 Rafraîchissement
 
   // Load saved plans from localStorage on mount
   useEffect(() => {
@@ -24,44 +25,46 @@ export const PlanActionProvider = ({ children }) => {
     setActions((prevActions) => [...prevActions, newAction]);
   };
 
-  // New function to add action from non-conformity data
-const addActionFromNonConformity = async ({
-  nonConformity,
-  responsible,
-  correctionDate,
-  recommendation,
-  actionTitle = "Action liée à une non-conformité",
-  plannedDate = "",
-  status = "À faire",
-  auditType = "",
-}) => {
-  try {
-    const newAction = {
-      action: actionTitle,
-      responsible,
-      plannedDate: plannedDate || new Date(),
-      status,
-      auditType,
-      nonConformities: [nonConformity], // Lien avec la NC
-    };
+  // ✅ Corrigé : plus de setActions ici, juste déclenche le refresh
+  const addActionFromNonConformity = async ({
+    nonConformity,
+    responsible,
+    correctionDate,
+    recommendation,
+    actionTitle = "Action liée à une non-conformité",
+    status = "À faire",
+    description = "",
+    auditType = "",
+  }) => {
+    try {
+      const newAction = {
+        action: recommendation || actionTitle,
+        description,
+        responsible,
+        plannedDate: correctionDate || new Date(),
+        correctionDate,
+        recommendation,
+        status,
+        auditType,
+        nonConformities: [nonConformity],
+      };
 
-    const response = await fetch("http://localhost:5000/api/actions", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newAction),
-    });
+      const response = await fetch("http://localhost:5000/api/actions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newAction),
+      });
 
-  const saved = await response.json();
-console.log("✅ Action automatiquement générée :", saved);
+      const saved = await response.json();
+      console.log("✅ Action automatiquement générée :", saved);
 
-// ⚠️ Recharge les données depuis le backend
-const all = await fetch("http://localhost:5000/api/actions").then((r) => r.json());
-setActions(all);
-
-  } catch (error) {
-    console.error("❌ Erreur génération action :", error);
-  }
-};
+      // 🧠 Refetch avec populate
+      await fetch(`http://localhost:5000/api/actions/${saved._id}`);
+      setRefreshFlag((prev) => !prev); // ✅ SEUL déclencheur
+    } catch (error) {
+      console.error("❌ Erreur génération action :", error);
+    }
+  };
 
   const updateAction = (updatedAction) => {
     setActions((prevActions) =>
@@ -71,13 +74,13 @@ setActions(all);
     );
   };
 
-  const deleteAction = (actionId) => {
-    setActions((prevActions) =>
-      prevActions.filter((action) => action.id !== actionId)
-    );
-  };
+ const deleteAction = (actionId) => {
+  setActions((prevActions) =>
+    prevActions.filter((action) => action.id !== actionId)
+  );
+};
 
-  // Function to save current plan to savedPlans
+
   const saveCurrentPlan = (planName) => {
     if (!planName) {
       planName = `Plan d'action ${new Date().toLocaleString()}`;
@@ -91,18 +94,24 @@ setActions(all);
     setSavedPlans((prevPlans) => [...prevPlans, newPlan]);
   };
 
+  const pushActionToFront = (action) => {
+    setActions((prev) => [...prev, action]);
+  };
+
   return (
     <PlanActionContext.Provider
       value={{
         actions,
         addAction,
         addActionFromNonConformity,
+        pushActionToFront,
         updateAction,
         deleteAction,
         savedPlans,
         saveCurrentPlan,
         currentPlan,
         setCurrentPlan,
+        refreshFlag,
       }}
     >
       {children}
